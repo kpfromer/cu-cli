@@ -1,7 +1,12 @@
 jest.mock('cu-api');
+jest.mock('../calendar');
+jest.mock('googleapis');
 import * as CU from 'cu-api';
+import * as calendarHelper from '../calendar';
+import { google } from 'googleapis';
 
-import { getGpa, getCourses } from '../cli';
+import * as cli from '../cli';
+import { getGpa, getCourses, syncClassesCalendar } from '../cli';
 
 describe('getGpa', () => {
   let config: any;
@@ -142,5 +147,81 @@ describe('getCourses', () => {
     };
 
     expect(errorWrapper).rejects.toThrowErrorMatchingSnapshot();
+  });
+});
+
+describe('syncClassesCalendar', () => {
+  let config: any;
+  let mockGoogleCredentials: any;
+  beforeEach(() => {
+    mockGoogleCredentials = {
+      clientId: 'clientId',
+      secret: 'googleSecret'
+    };
+    config = {
+      get: jest.fn(),
+      has: jest.fn()
+    };
+    config.get.mockImplementation((name: string) => {
+      if (name === 'username') return 'mock-username';
+      else if (name === 'password') return 'mock-password';
+      else if (name === 'google') return mockGoogleCredentials;
+      else throw new Error();
+    });
+    config.has.mockImplementation((name: string) => {
+      return name === 'username' || name === 'password' || name === 'google';
+    });
+  });
+  it('creates calendar events based on classes', async () => {
+    expect.assertions(4);
+
+    const mockAuth = jest.fn();
+    const mockCalendar = {
+      events: {
+        insert: jest.fn()
+      }
+    };
+    const term = 'next';
+    const courses = [
+      {
+        courseTitle: 'The is the class name!',
+        courseId: 'courseId',
+        courseSubject: 'CSCI',
+        courseNumber: '2824',
+        courseSection: '666',
+        credits: '55',
+        instructors: [
+          {
+            name: 'Kyle Pfromer',
+            email: 'kyle@email.com'
+          }
+        ],
+        courseStartDate: '2020-01-01',
+        courseStopDate: '2020-04-04',
+        courseStartTime: '9:0',
+        courseStopTime: '9:50',
+        descrLocation: 'engineering center',
+        days: 'MWF'
+      }
+    ];
+
+    const getCoursesSpy = jest
+      .spyOn(cli, 'getCourses')
+      .mockResolvedValue(courses as any);
+    (calendarHelper as jest.Mocked<
+      typeof calendarHelper
+    >).authorize.mockResolvedValue(mockAuth as any);
+    (google as jest.Mocked<typeof google>).calendar.mockReturnValue(
+      mockCalendar as any
+    );
+
+    await syncClassesCalendar(config, term);
+
+    expect(getCoursesSpy).toHaveBeenCalledWith(config, term);
+    expect(google.calendar).toHaveBeenCalledWith({
+      version: 'v3',
+      auth: mockAuth
+    });
+    expect(mockCalendar.events.insert.mock.calls[0][0]).toMatchSnapshot();
   });
 });
