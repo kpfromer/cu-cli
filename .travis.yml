@@ -1,3 +1,10 @@
+dist: trusty
+
+addons:
+  apt:
+    packages:
+      - libsecret-1-dev
+
 language: node_js
 
 node_js: '10'
