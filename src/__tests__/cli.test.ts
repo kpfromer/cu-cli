@@ -100,33 +100,82 @@ describe('getCourses', () => {
       }
     ];
   });
-  it("gets current term's courses", async () => {
-    expect.assertions(4);
+  describe('terms', () => {
+    let classTermData: Map<any, any>;
+    beforeEach(() => {
+      classTermData = new Map();
+      classTermData.set('class-id', {
+        name: 'Computer Systems'
+      });
 
-    const classTermData = new Map();
-    classTermData.set('class-id', {
-      name: 'Computer Systems'
+      (CU as jest.Mocked<
+        typeof CU
+      >).CUSession.prototype.termData.mockResolvedValueOnce(termData);
+
+      (CU as jest.Mocked<
+        typeof CU
+      >).CUSession.prototype.classTermData.mockResolvedValueOnce(classTermData);
     });
+    it("gets current term's courses", async () => {
+      expect.assertions(4);
 
-    (CU as jest.Mocked<
-      typeof CU
-    >).CUSession.prototype.termData.mockResolvedValueOnce(termData);
+      const courses = await getCourses(config);
 
-    (CU as jest.Mocked<
-      typeof CU
-    >).CUSession.prototype.classTermData.mockResolvedValueOnce(classTermData);
+      const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock
+        .instances[0];
+      expect(CU.CUSession).toHaveBeenCalled();
+      expect(CUSessionInstance.init).toHaveBeenCalledWith(
+        'mock-username',
+        'mock-password'
+      );
+      expect(CUSessionInstance.classTermData).toHaveBeenCalledWith('2201'); // current term
+      expect(courses).toEqual([classTermData.get('class-id')]);
+    });
+    it("gets next term's courses", async () => {
+      expect.assertions(4);
 
-    const courses = await getCourses(config);
+      const courses = await getCourses(config, 'next');
 
-    const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock
-      .instances[0];
-    expect(CU.CUSession).toHaveBeenCalled();
-    expect(CUSessionInstance.init).toHaveBeenCalledWith(
-      'mock-username',
-      'mock-password'
-    );
-    expect(CUSessionInstance.classTermData).toHaveBeenCalledWith('2201'); // current term
-    expect(courses).toEqual([classTermData.get('class-id')]);
+      const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock
+        .instances[0];
+      expect(CU.CUSession).toHaveBeenCalled();
+      expect(CUSessionInstance.init).toHaveBeenCalledWith(
+        'mock-username',
+        'mock-password'
+      );
+      expect(CUSessionInstance.classTermData).toHaveBeenCalledWith('2202'); // current term
+      expect(courses).toEqual([classTermData.get('class-id')]);
+    });
+    it("gets next next term's courses", async () => {
+      expect.assertions(4);
+
+      const courses = await getCourses(config, 'next-next');
+
+      const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock
+        .instances[0];
+      expect(CU.CUSession).toHaveBeenCalled();
+      expect(CUSessionInstance.init).toHaveBeenCalledWith(
+        'mock-username',
+        'mock-password'
+      );
+      expect(CUSessionInstance.classTermData).toHaveBeenCalledWith('2203'); // current term
+      expect(courses).toEqual([classTermData.get('class-id')]);
+    });
+    it("gets previous term's courses", async () => {
+      expect.assertions(4);
+
+      const courses = await getCourses(config, 'previous');
+
+      const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock
+        .instances[0];
+      expect(CU.CUSession).toHaveBeenCalled();
+      expect(CUSessionInstance.init).toHaveBeenCalledWith(
+        'mock-username',
+        'mock-password'
+      );
+      expect(CUSessionInstance.classTermData).toHaveBeenCalledWith('2200'); // current term
+      expect(courses).toEqual([classTermData.get('class-id')]);
+    });
   });
   it('errors if term is not found', () => {
     (CU as jest.Mocked<
@@ -162,15 +211,6 @@ describe('syncClassesCalendar', () => {
       get: jest.fn(),
       has: jest.fn()
     };
-    config.get.mockImplementation((name: string) => {
-      if (name === 'username') return 'mock-username';
-      else if (name === 'password') return 'mock-password';
-      else if (name === 'google') return mockGoogleCredentials;
-      else throw new Error();
-    });
-    config.has.mockImplementation((name: string) => {
-      return name === 'username' || name === 'password' || name === 'google';
-    });
   });
   it('creates calendar events based on classes', async () => {
     expect.assertions(4);
@@ -205,6 +245,16 @@ describe('syncClassesCalendar', () => {
       }
     ];
 
+    config.get.mockImplementation((name: string) => {
+      if (name === 'username') return 'mock-username';
+      else if (name === 'password') return 'mock-password';
+      else if (name === 'google') return mockGoogleCredentials;
+      else throw new Error();
+    });
+    config.has.mockImplementation((name: string) => {
+      return name === 'username' || name === 'password' || name === 'google';
+    });
+
     const getCoursesSpy = jest
       .spyOn(cli, 'getCourses')
       .mockResolvedValue(courses as any);
@@ -223,5 +273,21 @@ describe('syncClassesCalendar', () => {
       auth: mockAuth
     });
     expect(mockCalendar.events.insert.mock.calls[0][0]).toMatchSnapshot();
+  });
+  it('errors if not logged into google', () => {
+    config.get.mockImplementation((name: string) => {
+      if (name === 'username') return 'mock-username';
+      else if (name === 'password') return 'mock-password';
+      else throw new Error();
+    });
+    config.has.mockImplementation((name: string) => {
+      return name === 'username' || name === 'password';
+    });
+
+    const errorWrapper = async () => {
+      await syncClassesCalendar(config);
+    };
+
+    expect(errorWrapper).rejects.toThrowErrorMatchingSnapshot();
   });
 });

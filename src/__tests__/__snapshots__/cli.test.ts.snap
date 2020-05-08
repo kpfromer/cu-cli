@@ -27,3 +27,5 @@ Instructors:
   },
 }
 `;
+
+exports[`syncClassesCalendar errors if not logged into google 1`] = `"Not logged in to google."`;
