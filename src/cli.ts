@@ -4,6 +4,8 @@ import moment from 'moment';
 import { authorize } from './calendar';
 import { google } from 'googleapis';
 import { toDays } from './helper';
+// for tests to spy on getCourses
+import * as helper from './cli';
 
 function getLogin(config: Conf): { username: string; password: string } {
   if (!config.has('username') || !config.has('password'))
@@ -65,7 +67,7 @@ export async function syncClassesCalendar(
   config: Conf,
   term: 'current' | 'next' | 'next-next' | 'previous' = 'current'
 ): Promise<void> {
-  const courses = await getCourses(config, term);
+  const courses = await helper.getCourses(config, term);
 
   if (!config.has('google')) throw new Error('Not logged in to google.');
   const auth = await authorize(config.get('google'));
