@@ -90,3 +90,7 @@ Then run the following command to sync your events with your calendar!
 ```bash
 cu-cli sync
 ```
+
+From zero to hero:
+
+![A synced calendar](docs/synced-calendar.png)
