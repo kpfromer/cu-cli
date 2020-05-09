@@ -177,7 +177,8 @@ describe('getCourses', () => {
       expect(courses).toEqual([classTermData.get('class-id')]);
     });
   });
-  it('errors if term is not found', () => {
+  it('errors if term is not found', async () => {
+    expect.assertions(1);
     (CU as jest.Mocked<
       typeof CU
     >).CUSession.prototype.termData.mockResolvedValueOnce([
@@ -195,7 +196,7 @@ describe('getCourses', () => {
       await getCourses(config);
     };
 
-    expect(errorWrapper).rejects.toThrowErrorMatchingSnapshot();
+    await expect(errorWrapper).rejects.toThrowErrorMatchingSnapshot();
   });
 });
 
@@ -213,7 +214,7 @@ describe('syncClassesCalendar', () => {
     };
   });
   it('creates calendar events based on classes', async () => {
-    expect.assertions(4);
+    expect.assertions(3);
 
     const mockAuth = jest.fn();
     const mockCalendar = {
@@ -274,7 +275,8 @@ describe('syncClassesCalendar', () => {
     });
     expect(mockCalendar.events.insert.mock.calls[0][0]).toMatchSnapshot();
   });
-  it('errors if not logged into google', () => {
+  it('errors if not logged into google', async () => {
+    expect.assertions(1);
     config.get.mockImplementation((name: string) => {
       if (name === 'username') return 'mock-username';
       else if (name === 'password') return 'mock-password';
@@ -288,6 +290,6 @@ describe('syncClassesCalendar', () => {
       await syncClassesCalendar(config);
     };
 
-    expect(errorWrapper).rejects.toThrowErrorMatchingSnapshot();
+    await expect(errorWrapper).rejects.toThrowErrorMatchingSnapshot();
   });
 });
