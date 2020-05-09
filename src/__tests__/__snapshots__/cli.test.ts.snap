@@ -10,9 +10,9 @@ Object {
 Subject: CSCI2824-666
 Credits: 55
 Instructors:
-	Kyle Pfromer - Kyle Pfromer",
+	Kyle Pfromer - kyle@email.com",
     "end": Object {
-      "dateTime": "2020-01-01T16:50:00.000Z",
+      "dateTime": "2020-01-01T09:50:00.000Z",
       "timeZone": "America/Denver",
     },
     "location": "engineering center",
@@ -20,7 +20,7 @@ Instructors:
       "RRULE:FREQ=WEEKLY;UNTIL=20200404T000000Z;WKST=SU;BYDAY=MO,WE,FR",
     ],
     "start": Object {
-      "dateTime": "2020-01-01T16:00:00.000Z",
+      "dateTime": "2020-01-01T09:00:00.000Z",
       "timeZone": "America/Denver",
     },
     "summary": "The is the class name!",

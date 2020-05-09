@@ -74,21 +74,21 @@ export async function syncClassesCalendar(
   const calendar = google.calendar({ version: 'v3', auth });
 
   for (let course of courses) {
-    const startTime = moment(
+    const startTime = moment.utc(
       `${course.courseStartDate} ${course.courseStartTime}`,
       'YYYY-MM-DD k:m'
     );
-    const endTime = moment(
+    const endTime = moment.utc(
       `${course.courseStartDate} ${course.courseStopTime}`,
       'YYYY-MM-DD k:m'
     );
-    const endDate = moment(course.courseStopDate, 'YYYY-MM-DD');
+    const endDate = moment.utc(course.courseStopDate, 'YYYY-MM-DD');
     // const start = course.courseStartDate
     const days = toDays(course.days);
     const instructorText = course.instructors.reduce(
       (prev, instructor, index) => {
         if (index === 0) {
-          return `\t${instructor.name} - ${instructor.name}`;
+          return `\t${instructor.name} - ${instructor.email}`;
         }
         return prev + `\n\t${instructor.name} - ${instructor.email}`;
       },
