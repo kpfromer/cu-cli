@@ -5,6 +5,9 @@
   "author": "Kyle Pfromer",
   "license": "MIT",
   "repository": "github:kpfromer/cu-cli",
+  "bin": {
+    "cu-cli": "lib/index.js"
+  },
   "scripts": {
     "start": "ts-node src/index.ts",
     "build": "tsc",
