@@ -16,23 +16,27 @@ describe('toPlace', () => {
 
 describe('toDays', () => {
   it('returns monday', () => {
-    expect(toDays('M')).toEqual(['MO']);
+    expect(toDays(['MONDAY'])).toEqual(['MO']);
   });
   it('returns tuesday', () => {
-    expect(toDays('T')).toEqual(['TU']);
+    expect(toDays(['TUESDAY'])).toEqual(['TU']);
   });
   it('returns wednesday', () => {
-    expect(toDays('W')).toEqual(['WE']);
+    expect(toDays(['WEDNESDAY'])).toEqual(['WE']);
   });
   it('returns thursday', () => {
-    expect(toDays('TH')).toEqual(['TH']);
+    expect(toDays(['THURSDAY'])).toEqual(['TH']);
   });
   it('returns friday', () => {
-    expect(toDays('F')).toEqual(['FR']);
+    expect(toDays(['FRIDAY'])).toEqual(['FR']);
   });
   it('returns multiple days', () => {
-    expect(toDays('MWF')).toEqual(['MO', 'WE', 'FR']);
-    expect(toDays('TTH')).toEqual(['TU', 'TH']);
+    expect(toDays(['MONDAY', 'WEDNESDAY', 'FRIDAY'])).toEqual([
+      'MO',
+      'WE',
+      'FR'
+    ]);
+    expect(toDays(['TUESDAY', 'THURSDAY'])).toEqual(['TU', 'TH']);
   });
 });
 

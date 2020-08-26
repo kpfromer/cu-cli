@@ -87,17 +87,24 @@ import { google } from 'googleapis';
       async (argv) => {
         const courses = await getCourses(config, argv.term);
         for (let course of courses) {
+          if (course.classMtgPatterns.length === 0) continue;
+          const {
+            meetingTimeStart,
+            meetingTimeEnd,
+            meetingDays,
+            instructors
+          } = course.classMtgPatterns[0];
           console.log(
-            `${chalk.green(course.courseTitle)} ${chalk.blue(
-              `(${course.courseSubject} ${course.courseNumber}-${
-                course.courseSection
-              }) ${chalk.red(`${course.credits} credits `)} ${course.days} ${
-                course.courseStartTime
-              }-${course.courseStopTime}`
+            `${chalk.green(course.courseTitleLong)} ${chalk.blue(
+              `(${course.subject} ${course.catalogNbr}-${
+                course.classSection
+              }) ${chalk.red(`${course.untTaken} credits `)} ${meetingDays.join(
+                ', '
+              )} ${meetingTimeStart}-${meetingTimeEnd}`
             )}`
           );
-          for (let instructor of course.instructors) {
-            console.log(`\t${instructor.name} - ${instructor.email}`);
+          for (let { instructorName, instrEmailAddr } of instructors) {
+            console.log(`\t${instructorName} - ${instrEmailAddr}`);
           }
         }
       }
@@ -128,6 +135,7 @@ import { google } from 'googleapis';
         await syncClassesCalendar(config, argv.term);
       }
     )
+    .scriptName('cu-cli')
     .alias('h', 'help')
     .help().argv;
 })();
