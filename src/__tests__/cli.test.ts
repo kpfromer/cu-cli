@@ -2,10 +2,93 @@ jest.mock('cu-api');
 jest.mock('../calendar');
 jest.mock('googleapis');
 import * as CU from 'cu-api';
+import { CourseV3 } from 'cu-api';
 import { google } from 'googleapis';
 import * as calendarHelper from '../calendar';
 import * as cli from '../cli';
 import { getCourses, getGpa, syncClassesCalendar } from '../cli';
+
+const mockCourse: CourseV3 = {
+  emplid: '111111111',
+  classNbr: '26880',
+  strm: '2207',
+  institution: 'CUBLD',
+  subject: 'CSCI',
+  classSection: '001',
+  catalogNbr: '2820',
+  crseCareer: 'UGRD',
+  acadCareer: 'UGRD',
+  instrModeDescr: 'Remote',
+  instructionMode: 'R',
+  stdntEnrlStatus: 'E',
+  enrlCap: '114',
+  wlReseqFlg: 'N',
+  crseId: '203976',
+  untTaken: '3',
+  sessionCode: 'B',
+  classStartDt: '2020-08-24',
+  classEndDt: '2020-12-07',
+  classDescr: 'Linear Algebra with CS Apps',
+  courseTitleLong: 'Linear Algebra with Computer Science Applications',
+  waitlistPos: '0',
+  topicDescr: '',
+  crseGradeOff: 'A',
+  enrlStatusReason: 'ENRL',
+  termDescr: 'Fall 2020 CU Boulder',
+  waitCap: '999',
+  waitTot: '0',
+  endDtOee: '',
+  startDtOee: '',
+  crseOfferNbr: '1',
+  ssrComponent: 'LEC',
+  url: '',
+  campus: 'BLDR',
+  lms: 'Canvas',
+  lmsLink: 'https://canvas.colorado.edu/courses/sis_course_id:203976-01-2207-B-001',
+  classExams: [
+    {
+      examDt: '2020-12-10',
+      examStartTime: '16:30',
+      examEndTime: '19:0',
+      examBldg: 'MEETS',
+      examRoom: 'REMOTELY',
+    },
+  ],
+  classMtgPatterns: [
+    {
+      classMtgNbr: '1',
+      bldg: 'MEETS',
+      bldgDescr: 'Meets',
+      facilityType: 'NMAP',
+      descrLocation: 'Meets Remotely',
+      room: 'REMOTELY',
+      meetingTimeStart: '14:20',
+      meetingTimeEnd: '15:35',
+      stndMtgPat: 'TTH',
+      mtgPatStartDt: '2020-08-24',
+      mtgPatEndDt: '2020-12-07',
+      mon: 'N',
+      tues: 'Y',
+      wed: 'N',
+      thurs: 'Y',
+      fri: 'N',
+      sat: 'N',
+      sun: 'N',
+      instructors: [
+        {
+          instructorName: 'First Last',
+          instrRole: 'PI',
+          instrEmailAddr: 'first.last@Colorado.EDU',
+          schedPrintInstr: 'Y',
+        },
+      ],
+      meetingDays: ['TUESDAY', 'THURSDAY'],
+    },
+  ],
+  courseStartDate: '2020-08-24',
+  sessionDescription: 'Boulder 16-Week Session',
+  course: 'CSCI2820',
+};
 
 describe('getGpa', () => {
   let config: any;
@@ -196,28 +279,7 @@ describe('syncClassesCalendar', () => {
       },
     };
     const term = 'next';
-    const courses = [
-      {
-        courseTitle: 'The is the class name!',
-        courseId: 'courseId',
-        courseSubject: 'CSCI',
-        courseNumber: '2824',
-        courseSection: '666',
-        credits: '55',
-        instructors: [
-          {
-            name: 'Kyle Pfromer',
-            email: 'kyle@email.com',
-          },
-        ],
-        courseStartDate: '2020-01-01',
-        courseStopDate: '2020-04-04',
-        courseStartTime: '9:0',
-        courseStopTime: '9:50',
-        descrLocation: 'engineering center',
-        days: 'MWF',
-      },
-    ];
+    const courses: CourseV3[] = [mockCourse];
 
     config.get.mockImplementation((name: string) => {
       if (name === 'username') return 'mock-username';
