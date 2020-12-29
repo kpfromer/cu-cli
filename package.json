@@ -11,9 +11,10 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "build": "tsc",
-    "test": "jest --coverage",
+    "test": "jest",
     "test:cov": "jest --coverage && coveralls < coverage/lcov.info",
-    "prepare": "yarn build",
+    "format": "prettier --write .",
+    "lint": "eslint '*/**/*.{js,jsx,ts,tsx}' --fix",
     "commit": "git cz",
     "semantic-release": "semantic-release"
   },
