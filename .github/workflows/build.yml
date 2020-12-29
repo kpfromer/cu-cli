@@ -32,8 +32,8 @@ jobs:
         run: yarn install
 
       # Run tests
-      - name: Test with Coverage
-        run: yarn test:cov
+      - name: Test
+        run: yarn test
 
   release:
     # Only release on push to main
