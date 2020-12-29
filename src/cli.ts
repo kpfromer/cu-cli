@@ -1,7 +1,7 @@
 import * as Conf from 'conf';
 import { CourseV3, CUSession, ITerm } from 'cu-api';
 import { google } from 'googleapis';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import { authorize } from './calendar';
 // for tests to spy on getCourses
 import * as helper from './cli';
@@ -82,9 +82,9 @@ export async function syncClassesCalendar(
       instructors,
       descrLocation,
     } = course.classMtgPatterns[0]!;
-    const startTime = moment(`${mtgPatStartDt} ${meetingTimeStart}`, 'YYYY-MM-DD k:m');
-    const endTime = moment(`${mtgPatStartDt} ${meetingTimeEnd}`, 'YYYY-MM-DD k:m');
-    const endDate = moment(mtgPatEndDt, 'YYYY-MM-DD');
+    const startTime = DateTime.fromFormat(`${mtgPatStartDt} ${meetingTimeStart}`, 'yyyy-MM-dd T');
+    const endTime = DateTime.fromFormat(`${mtgPatStartDt} ${meetingTimeEnd}`, 'yyyy-MM-dd T');
+    const endDate = DateTime.fromFormat(mtgPatEndDt, 'yyyy-MM-dd', { locale: 'en' });
     // const start = course.courseStartDate
     const days = toDays(meetingDays);
     const instructorText = instructors.reduce((prev, { instructorName, instrEmailAddr }, index) => {
@@ -100,17 +100,17 @@ export async function syncClassesCalendar(
         summary: course.courseTitleLong,
         description: `Course Id: ${course.crseId}\nSubject: ${course.course}-${course.classSection}\nCredits: ${course.untTaken}\nInstructors:\n${instructorText}`,
         start: {
-          dateTime: startTime.toISOString(true),
+          dateTime: startTime.toISO(),
           timeZone: 'America/Denver',
         },
         end: {
-          dateTime: endTime.toISOString(true),
+          dateTime: endTime.toISO(),
           timeZone: 'America/Denver',
         },
         recurrence: [
-          `RRULE:FREQ=WEEKLY;UNTIL=${endDate
-            .locale('en')
-            .format('YYYYMMDD[T]000000[Z]')};WKST=SU;BYDAY=${days.join(',')}`,
+          `RRULE:FREQ=WEEKLY;UNTIL=${endDate.toFormat(
+            "yyyyMMdd'T'000000'Z'",
+          )};WKST=SU;BYDAY=${days.join(',')}`,
         ],
         location: descrLocation,
       },
