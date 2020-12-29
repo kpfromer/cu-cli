@@ -220,6 +220,6 @@ $RECYCLE.BIN/
 
 src
 tsconfig.json
-.travis.yml
+.github
 .gitignore
 tslint.json
