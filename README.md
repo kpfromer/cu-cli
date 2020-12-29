@@ -4,7 +4,8 @@
 [![Build Status](https://travis-ci.com/kpfromer/cu-cli.svg?branch=master)](https://travis-ci.com/kpfromer/cu-cli)
 [![Coverage Status](https://coveralls.io/repos/github/kpfromer/cu-cli/badge.svg?branch=master)](https://coveralls.io/github/kpfromer/cu-cli?branch=master)
 
-A command line tool for Unversity of Colorado students to quickly get their GPAs, course details and sync their classes with their Google calendars.
+A command line tool for Unversity of Colorado students to quickly get their GPAs, course details and
+sync their classes with their Google calendars.
 
 ## Install
 
@@ -18,10 +19,13 @@ or
 yarn global add cu-cli
 ```
 
+**Make sure** to install the dependencies need for
+[`keytar`](https://github.com/atom/node-keytar#installing).
+
 ## Usage
 
-Firstly you will need to login to your cu account. The details of your account
-are encrypted on the machine and stored using the system's keyring.
+Firstly you will need to login to your cu account. The details of your account are encrypted on the
+machine and stored using the system's keyring.
 
 ```bash
 cu-cli login-cu
