@@ -1,18 +1,18 @@
-import { CUSession, ICourse, ITerm } from 'cu-api';
 import * as Conf from 'conf';
-import moment from 'moment';
-import { authorize } from './calendar';
+import { CourseV3, CUSession, ITerm } from 'cu-api';
 import { google } from 'googleapis';
-import { toDays } from './helper';
+import { DateTime } from 'luxon';
+import { authorize } from './calendar';
 // for tests to spy on getCourses
 import * as helper from './cli';
+import { toDays } from './helper';
 
 function getLogin(config: Conf): { username: string; password: string } {
   if (!config.has('username') || !config.has('password'))
     throw new TypeError('User is not loaded in to CU.');
   return {
     username: config.get('username'),
-    password: config.get('password')
+    password: config.get('password'),
   };
 }
 
@@ -40,8 +40,8 @@ export async function getGpa(config: Conf): Promise<number> {
 
 export async function getCourses(
   config: Conf,
-  term: 'current' | 'next' | 'next-next' | 'previous' = 'current'
-): Promise<ICourse[]> {
+  term: 'current' | 'next' | 'next-next' | 'previous' = 'current',
+): Promise<CourseV3[]> {
   const session = await createSession(config);
   const terms = await session.termData();
   let wantedTerm: ITerm['attributeName'] = 'CURRENT_TERM';
@@ -54,9 +54,7 @@ export async function getCourses(
   if (!foundTerm) {
     throw new Error('Could not find current term data.');
   }
-  const courses = Array.from(
-    (await session.classTermData(foundTerm.term4)).values()
-  );
+  const courses = Array.from((await session.classTermData(foundTerm.term4)).values());
   return courses;
 }
 
@@ -65,7 +63,7 @@ export async function getCourses(
  */
 export async function syncClassesCalendar(
   config: Conf,
-  term: 'current' | 'next' | 'next-next' | 'previous' = 'current'
+  term: 'current' | 'next' | 'next-next' | 'previous' = 'current',
 ): Promise<void> {
   const courses = await helper.getCourses(config, term);
 
@@ -73,48 +71,49 @@ export async function syncClassesCalendar(
   const auth = await authorize(config.get('google'));
   const calendar = google.calendar({ version: 'v3', auth });
 
-  for (let course of courses) {
-    const startTime = moment.utc(
-      `${course.courseStartDate} ${course.courseStartTime}`,
-      'YYYY-MM-DD k:m'
-    );
-    const endTime = moment.utc(
-      `${course.courseStartDate} ${course.courseStopTime}`,
-      'YYYY-MM-DD k:m'
-    );
-    const endDate = moment.utc(course.courseStopDate, 'YYYY-MM-DD');
+  for (const course of courses) {
+    if (course.classMtgPatterns.length === 0) continue;
+    const {
+      mtgPatStartDt,
+      mtgPatEndDt,
+      meetingTimeStart,
+      meetingTimeEnd,
+      meetingDays,
+      instructors,
+      descrLocation,
+    } = course.classMtgPatterns[0]!;
+    const startTime = DateTime.fromFormat(`${mtgPatStartDt} ${meetingTimeStart}`, 'yyyy-MM-dd T');
+    const endTime = DateTime.fromFormat(`${mtgPatStartDt} ${meetingTimeEnd}`, 'yyyy-MM-dd T');
+    const endDate = DateTime.fromFormat(mtgPatEndDt, 'yyyy-MM-dd', { locale: 'en' });
     // const start = course.courseStartDate
-    const days = toDays(course.days);
-    const instructorText = course.instructors.reduce(
-      (prev, instructor, index) => {
-        if (index === 0) {
-          return `\t${instructor.name} - ${instructor.email}`;
-        }
-        return prev + `\n\t${instructor.name} - ${instructor.email}`;
-      },
-      ''
-    );
-    console.log(`Creating "${course.courseTitle}" event.`);
+    const days = toDays(meetingDays);
+    const instructorText = instructors.reduce((prev, { instructorName, instrEmailAddr }, index) => {
+      if (index === 0) {
+        return `\t${instructorName} - ${instrEmailAddr}`;
+      }
+      return prev + `\n\t${instructorName} - ${instrEmailAddr}`;
+    }, '');
+    console.log(`Creating "${course.courseTitleLong}" event.`);
     await calendar.events.insert({
       calendarId: 'primary',
       requestBody: {
-        summary: course.courseTitle,
-        description: `Course Id: ${course.courseId}\nSubject: ${course.courseSubject}${course.courseNumber}-${course.courseSection}\nCredits: ${course.credits}\nInstructors:\n${instructorText}`,
+        summary: course.courseTitleLong,
+        description: `Course Id: ${course.crseId}\nSubject: ${course.course}-${course.classSection}\nCredits: ${course.untTaken}\nInstructors:\n${instructorText}`,
         start: {
-          dateTime: startTime.toISOString(), // yyyy-mm-dd
-          timeZone: 'America/Denver'
+          dateTime: startTime.toISO(),
+          timeZone: 'America/Denver',
         },
         end: {
-          dateTime: endTime.toISOString(), // yyyy-mm-dd
-          timeZone: 'America/Denver'
+          dateTime: endTime.toISO(),
+          timeZone: 'America/Denver',
         },
         recurrence: [
-          `RRULE:FREQ=WEEKLY;UNTIL=${endDate
-            .locale('en')
-            .format('YYYYMMDD[T]000000[Z]')};WKST=SU;BYDAY=${days.join(',')}`
+          `RRULE:FREQ=WEEKLY;UNTIL=${endDate.toFormat(
+            "yyyyMMdd'T'000000'Z'",
+          )};WKST=SU;BYDAY=${days.join(',')}`,
         ],
-        location: course.descrLocation
-      }
+        location: descrLocation,
+      },
     });
   }
 }
