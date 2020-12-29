@@ -18,13 +18,13 @@ import { google } from 'googleapis';
       async () => {
         const { username, password } = await inquirer.prompt([
           { type: 'input', name: 'username', message: 'Username?' },
-          { type: 'password', name: 'password', message: 'Password?' }
+          { type: 'password', name: 'password', message: 'Password?' },
         ]);
         config.set({
           username,
-          password
+          password,
         });
-      }
+      },
     )
     .command(
       'login-google',
@@ -33,9 +33,9 @@ import { google } from 'googleapis';
       async () => {
         const googleCredentials = await login();
         config.set({
-          google: googleCredentials
+          google: googleCredentials,
         });
-      }
+      },
     )
     .command(
       'clean',
@@ -44,7 +44,7 @@ import { google } from 'googleapis';
       () => {
         config.clear();
         console.log('Logged out');
-      }
+      },
     )
     .command(
       'gpa',
@@ -53,7 +53,7 @@ import { google } from 'googleapis';
       async () => {
         const gpa = await getGpa(config);
         console.log(`${gpa} (${toPlace((gpa / 4) * 100)}%)`);
-      }
+      },
     )
     // .command(
     //   'calendars',
@@ -81,33 +81,31 @@ import { google } from 'googleapis';
           demandCommand: true,
           default: 'current',
           describe: 'the term to grab courses from (current, next, previous)',
-          type: 'string'
+          type: 'string',
         });
       },
       async (argv) => {
         const courses = await getCourses(config, argv.term);
-        for (let course of courses) {
+        for (const course of courses) {
           if (course.classMtgPatterns.length === 0) continue;
           const {
             meetingTimeStart,
             meetingTimeEnd,
             meetingDays,
-            instructors
+            instructors,
           } = course.classMtgPatterns[0];
           console.log(
             `${chalk.green(course.courseTitleLong)} ${chalk.blue(
-              `(${course.subject} ${course.catalogNbr}-${
-                course.classSection
-              }) ${chalk.red(`${course.untTaken} credits `)} ${meetingDays.join(
-                ', '
-              )} ${meetingTimeStart}-${meetingTimeEnd}`
-            )}`
+              `(${course.subject} ${course.catalogNbr}-${course.classSection}) ${chalk.red(
+                `${course.untTaken} credits `,
+              )} ${meetingDays.join(', ')} ${meetingTimeStart}-${meetingTimeEnd}`,
+            )}`,
           );
-          for (let { instructorName, instrEmailAddr } of instructors) {
+          for (const { instructorName, instrEmailAddr } of instructors) {
             console.log(`\t${instructorName} - ${instrEmailAddr}`);
           }
         }
-      }
+      },
     )
     .command<{
       term: 'current' | 'next' | 'next-next' | 'previous';
@@ -119,9 +117,8 @@ import { google } from 'googleapis';
           alias: 'term',
           demandCommand: true,
           default: 'current',
-          describe:
-            'the term to grab courses from (current, next, next-next, previous)',
-          type: 'string'
+          describe: 'the term to grab courses from (current, next, next-next, previous)',
+          type: 'string',
         });
         // yargs.option('c', {
         //   alias: 'calendarName',
@@ -133,7 +130,7 @@ import { google } from 'googleapis';
       },
       async (argv) => {
         await syncClassesCalendar(config, argv.term);
-      }
+      },
     )
     .scriptName('cu-cli')
     .alias('h', 'help')

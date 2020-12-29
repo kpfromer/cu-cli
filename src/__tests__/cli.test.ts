@@ -2,11 +2,10 @@ jest.mock('cu-api');
 jest.mock('../calendar');
 jest.mock('googleapis');
 import * as CU from 'cu-api';
-import * as calendarHelper from '../calendar';
 import { google } from 'googleapis';
-
+import * as calendarHelper from '../calendar';
 import * as cli from '../cli';
-import { getGpa, getCourses, syncClassesCalendar } from '../cli';
+import { getCourses, getGpa, syncClassesCalendar } from '../cli';
 
 describe('getGpa', () => {
   let config: any;
@@ -14,7 +13,7 @@ describe('getGpa', () => {
     jest.clearAllMocks();
     config = {
       get: jest.fn(),
-      has: jest.fn()
+      has: jest.fn(),
     };
     config.get.mockImplementation((name: string) => {
       if (name === 'username') return 'mock-username';
@@ -27,22 +26,16 @@ describe('getGpa', () => {
   });
   it('returns the gpa', async () => {
     expect.assertions(3);
-    (CU as jest.Mocked<
-      typeof CU
-    >).CUSession.prototype.GPA.mockResolvedValueOnce({
+    (CU as jest.Mocked<typeof CU>).CUSession.prototype.GPA.mockResolvedValueOnce({
       cum_GPA: '3.64',
-      cur_GPA: '4.0'
+      cur_GPA: '4.0',
     });
 
     const gpa = await getGpa(config);
 
-    const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock
-      .instances[0];
+    const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock.instances[0];
     expect(CU.CUSession).toHaveBeenCalled();
-    expect(CUSessionInstance.init).toHaveBeenCalledWith(
-      'mock-username',
-      'mock-password'
-    );
+    expect(CUSessionInstance.init).toHaveBeenCalledWith('mock-username', 'mock-password');
     expect(gpa).toEqual(3.64);
   });
 });
@@ -54,7 +47,7 @@ describe('getCourses', () => {
     jest.clearAllMocks();
     config = {
       get: jest.fn(),
-      has: jest.fn()
+      has: jest.fn(),
     };
     config.get.mockImplementation((name: string) => {
       if (name === 'username') return 'mock-username';
@@ -72,7 +65,7 @@ describe('getCourses', () => {
         startDate: '2019-08-01',
         endDate: '2020-12-25',
         termFriendly: 'Fall 2019',
-        attributeName: 'PREVIOUS_TERM'
+        attributeName: 'PREVIOUS_TERM',
       },
       {
         term4: '2201',
@@ -80,7 +73,7 @@ describe('getCourses', () => {
         startDate: '2020-01-01',
         endDate: '2020-04-04',
         termFriendly: 'Spring 2020',
-        attributeName: 'CURRENT_TERM'
+        attributeName: 'CURRENT_TERM',
       },
       {
         term4: '2202',
@@ -88,7 +81,7 @@ describe('getCourses', () => {
         startDate: '2020-05-01',
         endDate: '2020-08-01',
         termFriendly: 'Summer 2020',
-        attributeName: 'NEXT_TERM'
+        attributeName: 'NEXT_TERM',
       },
       {
         term4: '2203',
@@ -96,8 +89,8 @@ describe('getCourses', () => {
         startDate: '2020-08-01',
         endDate: '2020-12-25',
         termFriendly: 'Fall 2020',
-        attributeName: 'NEXT_NEXT_TERM'
-      }
+        attributeName: 'NEXT_NEXT_TERM',
+      },
     ];
   });
   describe('terms', () => {
@@ -105,29 +98,23 @@ describe('getCourses', () => {
     beforeEach(() => {
       classTermData = new Map();
       classTermData.set('class-id', {
-        name: 'Computer Systems'
+        name: 'Computer Systems',
       });
 
-      (CU as jest.Mocked<
-        typeof CU
-      >).CUSession.prototype.termData.mockResolvedValueOnce(termData);
+      (CU as jest.Mocked<typeof CU>).CUSession.prototype.termData.mockResolvedValueOnce(termData);
 
-      (CU as jest.Mocked<
-        typeof CU
-      >).CUSession.prototype.classTermData.mockResolvedValueOnce(classTermData);
+      (CU as jest.Mocked<typeof CU>).CUSession.prototype.classTermData.mockResolvedValueOnce(
+        classTermData,
+      );
     });
     it("gets current term's courses", async () => {
       expect.assertions(4);
 
       const courses = await getCourses(config);
 
-      const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock
-        .instances[0];
+      const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock.instances[0];
       expect(CU.CUSession).toHaveBeenCalled();
-      expect(CUSessionInstance.init).toHaveBeenCalledWith(
-        'mock-username',
-        'mock-password'
-      );
+      expect(CUSessionInstance.init).toHaveBeenCalledWith('mock-username', 'mock-password');
       expect(CUSessionInstance.classTermData).toHaveBeenCalledWith('2201'); // current term
       expect(courses).toEqual([classTermData.get('class-id')]);
     });
@@ -136,13 +123,9 @@ describe('getCourses', () => {
 
       const courses = await getCourses(config, 'next');
 
-      const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock
-        .instances[0];
+      const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock.instances[0];
       expect(CU.CUSession).toHaveBeenCalled();
-      expect(CUSessionInstance.init).toHaveBeenCalledWith(
-        'mock-username',
-        'mock-password'
-      );
+      expect(CUSessionInstance.init).toHaveBeenCalledWith('mock-username', 'mock-password');
       expect(CUSessionInstance.classTermData).toHaveBeenCalledWith('2202'); // current term
       expect(courses).toEqual([classTermData.get('class-id')]);
     });
@@ -151,13 +134,9 @@ describe('getCourses', () => {
 
       const courses = await getCourses(config, 'next-next');
 
-      const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock
-        .instances[0];
+      const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock.instances[0];
       expect(CU.CUSession).toHaveBeenCalled();
-      expect(CUSessionInstance.init).toHaveBeenCalledWith(
-        'mock-username',
-        'mock-password'
-      );
+      expect(CUSessionInstance.init).toHaveBeenCalledWith('mock-username', 'mock-password');
       expect(CUSessionInstance.classTermData).toHaveBeenCalledWith('2203'); // current term
       expect(courses).toEqual([classTermData.get('class-id')]);
     });
@@ -166,30 +145,24 @@ describe('getCourses', () => {
 
       const courses = await getCourses(config, 'previous');
 
-      const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock
-        .instances[0];
+      const CUSessionInstance = (CU as jest.Mocked<typeof CU>).CUSession.mock.instances[0];
       expect(CU.CUSession).toHaveBeenCalled();
-      expect(CUSessionInstance.init).toHaveBeenCalledWith(
-        'mock-username',
-        'mock-password'
-      );
+      expect(CUSessionInstance.init).toHaveBeenCalledWith('mock-username', 'mock-password');
       expect(CUSessionInstance.classTermData).toHaveBeenCalledWith('2200'); // current term
       expect(courses).toEqual([classTermData.get('class-id')]);
     });
   });
   it('errors if term is not found', async () => {
     expect.assertions(1);
-    (CU as jest.Mocked<
-      typeof CU
-    >).CUSession.prototype.termData.mockResolvedValueOnce([
+    (CU as jest.Mocked<typeof CU>).CUSession.prototype.termData.mockResolvedValueOnce([
       {
         term4: '2200',
         term5: 'term5',
         startDate: '2019-08-01',
         endDate: '2020-12-25',
         termFriendly: 'Fall 2019',
-        attributeName: 'PREVIOUS_TERM'
-      }
+        attributeName: 'PREVIOUS_TERM',
+      },
     ]);
 
     const errorWrapper = async () => {
@@ -206,11 +179,11 @@ describe('syncClassesCalendar', () => {
   beforeEach(() => {
     mockGoogleCredentials = {
       clientId: 'clientId',
-      secret: 'googleSecret'
+      secret: 'googleSecret',
     };
     config = {
       get: jest.fn(),
-      has: jest.fn()
+      has: jest.fn(),
     };
   });
   it('creates calendar events based on classes', async () => {
@@ -219,8 +192,8 @@ describe('syncClassesCalendar', () => {
     const mockAuth = jest.fn();
     const mockCalendar = {
       events: {
-        insert: jest.fn()
-      }
+        insert: jest.fn(),
+      },
     };
     const term = 'next';
     const courses = [
@@ -234,16 +207,16 @@ describe('syncClassesCalendar', () => {
         instructors: [
           {
             name: 'Kyle Pfromer',
-            email: 'kyle@email.com'
-          }
+            email: 'kyle@email.com',
+          },
         ],
         courseStartDate: '2020-01-01',
         courseStopDate: '2020-04-04',
         courseStartTime: '9:0',
         courseStopTime: '9:50',
         descrLocation: 'engineering center',
-        days: 'MWF'
-      }
+        days: 'MWF',
+      },
     ];
 
     config.get.mockImplementation((name: string) => {
@@ -256,22 +229,18 @@ describe('syncClassesCalendar', () => {
       return name === 'username' || name === 'password' || name === 'google';
     });
 
-    const getCoursesSpy = jest
-      .spyOn(cli, 'getCourses')
-      .mockResolvedValue(courses as any);
-    (calendarHelper as jest.Mocked<
-      typeof calendarHelper
-    >).authorize.mockResolvedValue(mockAuth as any);
-    (google as jest.Mocked<typeof google>).calendar.mockReturnValue(
-      mockCalendar as any
+    const getCoursesSpy = jest.spyOn(cli, 'getCourses').mockResolvedValue(courses as any);
+    (calendarHelper as jest.Mocked<typeof calendarHelper>).authorize.mockResolvedValue(
+      mockAuth as any,
     );
+    (google as jest.Mocked<typeof google>).calendar.mockReturnValue(mockCalendar as any);
 
     await syncClassesCalendar(config, term);
 
     expect(getCoursesSpy).toHaveBeenCalledWith(config, term);
     expect(google.calendar).toHaveBeenCalledWith({
       version: 'v3',
-      auth: mockAuth
+      auth: mockAuth,
     });
     expect(mockCalendar.events.insert.mock.calls[0][0]).toMatchSnapshot();
   });

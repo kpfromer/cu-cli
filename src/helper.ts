@@ -14,14 +14,7 @@ export function toPlace(number: number, place = 2) {
 }
 
 function getDay(
-  day:
-    | 'MONDAY'
-    | 'TUESDAY'
-    | 'WEDNESDAY'
-    | 'THURSDAY'
-    | 'FRIDAY'
-    | 'SATURDAY'
-    | 'SUNDAY'
+  day: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY',
 ): Day | undefined {
   switch (day) {
     case 'MONDAY':

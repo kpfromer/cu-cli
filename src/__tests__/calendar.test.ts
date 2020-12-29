@@ -1,8 +1,6 @@
 jest.mock('googleapis');
 jest.mock('google-auth-library');
 import * as googleApi from 'googleapis';
-import * as googleAuth from 'google-auth-library';
-
 import { authorize } from '../calendar';
 
 describe('calendar', () => {
