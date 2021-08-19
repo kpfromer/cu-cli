@@ -10,7 +10,7 @@ specifiers:
   '@semantic-release/release-notes-generator': 9.0.3
   '@types/conf': 3.0.0
   '@types/inquirer': 6.5.0
-  '@types/luxon': 1.26.4
+  '@types/luxon': 1.27.1
   '@types/uuid': 7.0.5
   '@types/yargs': 15.0.14
   '@typescript-eslint/eslint-plugin': 4.22.0
@@ -63,7 +63,7 @@ devDependencies:
   '@semantic-release/release-notes-generator': 9.0.3_semantic-release@17.4.5
   '@types/conf': 3.0.0
   '@types/inquirer': 6.5.0
-  '@types/luxon': 1.26.4
+  '@types/luxon': 1.27.1
   '@types/uuid': 7.0.5
   '@types/yargs': 15.0.14
   '@typescript-eslint/eslint-plugin': 4.22.0_e80cf9938a13a828e1e75fd11ebae284
@@ -579,8 +579,8 @@ packages:
     resolution: {integrity: sha1-7ihweulOEdK4J7y+UnC86n8+ce4=}
     dev: true
 
-  /@types/luxon/1.26.4:
-    resolution: {integrity: sha512-OIvbVLZQUjyZofqSFpre2VsgvKy0V0JQdRgN0k3H1DTGRdxHiaQjT16+H2gyuhAS9r8B2PQEwrSiqP6/Zka3pQ==}
+  /@types/luxon/1.27.1:
+    resolution: {integrity: sha512-cPiXpOvPFDr2edMnOXlz3UBDApwUfR+cpizvxCy0n3vp9bz/qe8BWzHPIEFcy+ogUOyjKuCISgyq77ELZPmkkg==}
     dev: true
 
   /@types/minimist/1.2.1:
