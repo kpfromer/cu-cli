@@ -40,7 +40,7 @@
     "@types/inquirer": "6.5.0",
     "@types/luxon": "1.26.4",
     "@types/uuid": "7.0.5",
-    "@types/yargs": "15.0.13",
+    "@types/yargs": "15.0.14",
     "@typescript-eslint/eslint-plugin": "4.22.0",
     "@typescript-eslint/parser": "4.22.0",
     "commitizen": "4.2.3",
