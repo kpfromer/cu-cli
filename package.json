@@ -1,6 +1,6 @@
 {
   "name": "cu-cli",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "lib/index.js",
   "author": "Kyle Pfromer",
   "license": "MIT",
@@ -93,6 +93,8 @@
     }
   },
   "commitlint": {
-    "extends": ["@commitlint/config-conventional"]
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   }
 }

@@ -1,3 +1,11 @@
+## [1.0.2](https://github.com/kpfromer/cu-cli/compare/v1.0.1...v1.0.2) (2021-08-19)
+
+
+### Bug Fixes
+
+* google auth ([7c400bf](https://github.com/kpfromer/cu-cli/commit/7c400bf420937bb88eba072d7b661d803f92d978))
+* update to new cu api version ([24bcd3f](https://github.com/kpfromer/cu-cli/commit/24bcd3f7580a477e3813c8f25fe94dc89baf54b0))
+
 ## [1.0.1](https://github.com/kpfromer/cu-cli/compare/v1.0.0...v1.0.1) (2020-05-09)
 
 ### Bug Fixes
