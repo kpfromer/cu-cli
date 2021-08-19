@@ -1,4 +1,4 @@
-import { google, calendar_v3 } from 'googleapis';
+import { google } from 'googleapis';
 import { OAuth2Client, Credentials } from 'google-auth-library';
 import * as inquirer from 'inquirer';
 
@@ -6,8 +6,12 @@ import * as inquirer from 'inquirer';
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
 const googleAuth = {
-  client_id: '867864663032-q5bujv25mljvupbet2rr4jrp7aharaps.apps.googleusercontent.com',
-  client_secret: '9IXaOsKa3lQQ7YHMNdQ-x3Yl',
+  client_id: '867864663032-2rra99aule2efabu5regpiu2edu1rhfu.apps.googleusercontent.com',
+  project_id: 'quickstart-1566938148739',
+  auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+  token_uri: 'https://oauth2.googleapis.com/token',
+  auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+  client_secret: '9Ruz9M78kAyPATZDx0QecUt9',
   redirect_uris: ['urn:ietf:wg:oauth:2.0:oob', 'http://localhost'],
 };
 

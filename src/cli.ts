@@ -34,7 +34,7 @@ export async function getGpa(config: Conf): Promise<number> {
   const { username, password } = await getLogin(config);
   const session = new CUSession();
   await session.init(username, password);
-  const gpa = parseFloat((await session.GPA()).cum_GPA);
+  const gpa = parseFloat((await session.GPA()).cumGpa);
   return gpa;
 }
 
@@ -69,6 +69,9 @@ export async function syncClassesCalendar(
 
   if (!config.has('google')) throw new Error('Not logged in to google.');
   const auth = await authorize(config.get('google'));
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   const calendar = google.calendar({ version: 'v3', auth });
 
   for (const course of courses) {
