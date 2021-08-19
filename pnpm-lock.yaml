@@ -22,7 +22,7 @@ specifiers:
   cz-conventional-changelog: 3.3.0
   eslint: 7.24.0
   eslint-config-prettier: 7.2.0
-  eslint-config-standard: 16.0.2
+  eslint-config-standard: 16.0.3
   eslint-plugin-import: 2.22.1
   eslint-plugin-node: 11.1.0
   eslint-plugin-prettier: 3.4.0
@@ -72,7 +72,7 @@ devDependencies:
   cz-conventional-changelog: 3.3.0
   eslint: 7.24.0
   eslint-config-prettier: 7.2.0_eslint@7.24.0
-  eslint-config-standard: 16.0.2_4415c507f509d9e1aea11d51ee760740
+  eslint-config-standard: 16.0.3_4415c507f509d9e1aea11d51ee760740
   eslint-plugin-import: 2.22.1_eslint@7.24.0
   eslint-plugin-node: 11.1.0_eslint@7.24.0
   eslint-plugin-prettier: 3.4.0_b144c793cc2fdccdc22afde27a813969
@@ -1899,13 +1899,13 @@ packages:
       eslint: 7.24.0
     dev: true
 
-  /eslint-config-standard/16.0.2_4415c507f509d9e1aea11d51ee760740:
-    resolution: {integrity: sha512-fx3f1rJDsl9bY7qzyX8SAtP8GBSk6MfXFaTfaGgk12aAYW4gJSyRm7dM790L6cbXv63fvjY4XeSzXnb4WM+SKw==}
+  /eslint-config-standard/16.0.3_4415c507f509d9e1aea11d51ee760740:
+    resolution: {integrity: sha512-x4fmJL5hGqNJKGHSjnLdgA6U6h1YW/G2dW9fA+cyVur4SK6lyue8+UgNKWlZtUDTXvgKDD/Oa3GQjmB5kjtVvg==}
     peerDependencies:
       eslint: ^7.12.1
       eslint-plugin-import: ^2.22.1
       eslint-plugin-node: ^11.1.0
-      eslint-plugin-promise: ^4.2.1
+      eslint-plugin-promise: ^4.2.1 || ^5.0.0
     dependencies:
       eslint: 7.24.0
       eslint-plugin-import: 2.22.1_eslint@7.24.0
