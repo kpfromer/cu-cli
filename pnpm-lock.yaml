@@ -28,7 +28,7 @@ specifiers:
   eslint-plugin-prettier: 3.4.1
   eslint-plugin-promise: 4.3.1
   google-auth-library: ^7.6.2
-  googleapis: ^84.0.0
+  googleapis: ^88.0.0
   husky: 4.3.8
   inquirer: ^7.1.0
   keytar: ^5.6.0
@@ -46,7 +46,7 @@ dependencies:
   conf: 6.2.4
   cu-api: 4.0.0
   google-auth-library: 7.6.2
-  googleapis: 84.0.0
+  googleapis: 88.2.0
   inquirer: 7.3.3
   keytar: 5.6.0
   luxon: 1.27.0
@@ -2703,8 +2703,8 @@ packages:
       - supports-color
     dev: false
 
-  /googleapis/84.0.0:
-    resolution: {integrity: sha512-5WWLwmraulw3p55lu0gNpLz2FME1gcuR7QxgmUdAVHMiVN4LEasYjJV9p36gxcf2TMe6bn6+PgQ/63+CvBEgoQ==}
+  /googleapis/88.2.0:
+    resolution: {integrity: sha512-z3iDvGVqaJ+4TZ7YulK530q5vkY0BifvAWqcu2JiUSgpnIHzsA89k005+McoaYB+lAgv7lPY2Y4OPMT6iloWRA==}
     engines: {node: '>=10'}
     dependencies:
       google-auth-library: 7.6.2
