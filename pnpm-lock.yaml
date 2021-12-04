@@ -26,7 +26,7 @@ specifiers:
   eslint-plugin-import: 2.25.3
   eslint-plugin-node: 11.1.0
   eslint-plugin-prettier: 3.4.1
-  eslint-plugin-promise: 4.3.1
+  eslint-plugin-promise: 5.2.0
   google-auth-library: ^7.6.2
   googleapis: ^84.0.0
   husky: 4.3.8
@@ -72,11 +72,11 @@ devDependencies:
   cz-conventional-changelog: 3.3.0
   eslint: 7.32.0
   eslint-config-prettier: 7.2.0_eslint@7.32.0
-  eslint-config-standard: 16.0.3_4756bc88b0f26b24b04bf0a729e3a9a6
+  eslint-config-standard: 16.0.3_d42fecbad7bfe7f5a4cd1039746899f1
   eslint-plugin-import: 2.25.3_eslint@7.32.0
   eslint-plugin-node: 11.1.0_eslint@7.32.0
   eslint-plugin-prettier: 3.4.1_f00f7e54b4b3cd43dd9e25d0d062b490
-  eslint-plugin-promise: 4.3.1
+  eslint-plugin-promise: 5.2.0_eslint@7.32.0
   husky: 4.3.8
   lint-staged: 10.5.4
   prettier: 2.5.1
@@ -1918,7 +1918,7 @@ packages:
       eslint: 7.32.0
     dev: true
 
-  /eslint-config-standard/16.0.3_4756bc88b0f26b24b04bf0a729e3a9a6:
+  /eslint-config-standard/16.0.3_d42fecbad7bfe7f5a4cd1039746899f1:
     resolution: {integrity: sha512-x4fmJL5hGqNJKGHSjnLdgA6U6h1YW/G2dW9fA+cyVur4SK6lyue8+UgNKWlZtUDTXvgKDD/Oa3GQjmB5kjtVvg==}
     peerDependencies:
       eslint: ^7.12.1
@@ -1929,7 +1929,7 @@ packages:
       eslint: 7.32.0
       eslint-plugin-import: 2.25.3_eslint@7.32.0
       eslint-plugin-node: 11.1.0_eslint@7.32.0
-      eslint-plugin-promise: 4.3.1
+      eslint-plugin-promise: 5.2.0_eslint@7.32.0
     dev: true
 
   /eslint-import-resolver-node/0.3.6:
@@ -2013,9 +2013,13 @@ packages:
       prettier-linter-helpers: 1.0.0
     dev: true
 
-  /eslint-plugin-promise/4.3.1:
-    resolution: {integrity: sha512-bY2sGqyptzFBDLh/GMbAxfdJC+b0f23ME63FOE4+Jao0oZ3E1LEwFtWJX/1pGMJLiTtrSSern2CRM/g+dfc0eQ==}
-    engines: {node: '>=6'}
+  /eslint-plugin-promise/5.2.0_eslint@7.32.0:
+    resolution: {integrity: sha512-SftLb1pUG01QYq2A/hGAWfDRXqYD82zE7j7TopDOyNdU+7SvvoXREls/+PRTY17vUXzXnZA/zfnyKgRH6x4JJw==}
+    engines: {node: ^10.12.0 || >=12.0.0}
+    peerDependencies:
+      eslint: ^7.0.0
+    dependencies:
+      eslint: 7.32.0
     dev: true
 
   /eslint-scope/5.1.1:
