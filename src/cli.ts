@@ -1,10 +1,13 @@
 import * as Conf from 'conf';
-import { CourseV3, CUSession, ITerm } from 'cu-api';
-import { google } from 'googleapis';
-import { DateTime } from 'luxon';
-import { authorize } from './calendar';
 // for tests to spy on getCourses
 import * as helper from './cli';
+
+import { CUSession, ClassMtgPattern, CourseV3, ITerm } from 'cu-api';
+
+import { DateTime } from 'luxon';
+import { Day } from './types';
+import { authorize } from './calendar';
+import { google } from 'googleapis';
 import { toDays } from './helper';
 
 function getLogin(config: Conf): { username: string; password: string } {
@@ -58,12 +61,48 @@ export async function getCourses(
   return courses;
 }
 
+function getOffset(day: Day) {
+  switch (day as string) {
+    case 'MO':
+      return 0;
+    case 'TU':
+      return 1;
+    case 'WE':
+      return 2;
+    case 'TH':
+      return 3;
+    case 'FR':
+      return 4;
+    default:
+      throw new Error('invalid day');
+  }
+}
+
+/**
+ * Returns the start datetime and end datetime (only time differs, both are on the same day).
+ */
+function getStartDate(classMtgPattern: ClassMtgPattern): { start: DateTime; end: DateTime } {
+  const { mtgPatStartDt, meetingTimeStart, meetingTimeEnd, meetingDays } = classMtgPattern;
+
+  const startTime = DateTime.fromFormat(`${mtgPatStartDt} ${meetingTimeStart}`, 'yyyy-MM-dd T');
+  const endTime = DateTime.fromFormat(`${mtgPatStartDt} ${meetingTimeEnd}`, 'yyyy-MM-dd T');
+  const days = toDays(meetingDays);
+
+  // get true startDate (since startTime will be the monday of the start date, the class may start on tuesdays)
+  const dayOffset = getOffset(days[0]);
+  const trueStartTime = startTime.plus({ days: dayOffset });
+  const trueEndTime = endTime.plus({ days: dayOffset });
+
+  return { start: trueStartTime, end: trueEndTime };
+}
+
 /**
  * Syncs classes from CU term to google calendar.
  */
 export async function syncClassesCalendar(
   config: Conf,
   term: 'current' | 'next' | 'next-next' | 'previous' = 'current',
+  calendarName = 'primary',
 ): Promise<void> {
   const courses = await helper.getCourses(config, term);
 
@@ -76,29 +115,37 @@ export async function syncClassesCalendar(
 
   for (const course of courses) {
     if (course.classMtgPatterns.length === 0) continue;
-    const {
-      mtgPatStartDt,
-      mtgPatEndDt,
-      meetingTimeStart,
-      meetingTimeEnd,
-      meetingDays,
-      instructors,
-      descrLocation,
-    } = course.classMtgPatterns[0]!;
-    const startTime = DateTime.fromFormat(`${mtgPatStartDt} ${meetingTimeStart}`, 'yyyy-MM-dd T');
-    const endTime = DateTime.fromFormat(`${mtgPatStartDt} ${meetingTimeEnd}`, 'yyyy-MM-dd T');
+    const { mtgPatEndDt, meetingDays, instructors, descrLocation } = course.classMtgPatterns[0]!;
+
+    const { start: startTime, end: endTime } = getStartDate(course.classMtgPatterns[0]!);
     const endDate = DateTime.fromFormat(mtgPatEndDt, 'yyyy-MM-dd', { locale: 'en' });
-    // const start = course.courseStartDate
     const days = toDays(meetingDays);
-    const instructorText = instructors.reduce((prev, { instructorName, instrEmailAddr }, index) => {
-      if (index === 0) {
-        return `\t${instructorName} - ${instrEmailAddr}`;
-      }
-      return prev + `\n\t${instructorName} - ${instrEmailAddr}`;
-    }, '');
+
+    const instructorText = instructors
+      ? instructors.reduce((prev, { instructorName, instrEmailAddr }, index) => {
+          if (index === 0) {
+            return `\t${instructorName} - ${instrEmailAddr}`;
+          }
+          return prev + `\n\t${instructorName} - ${instrEmailAddr}`;
+        }, '')
+      : '';
+
     console.log(`Creating "${course.courseTitleLong}" event.`);
+
+    const calendarNameToId = new Map(
+      (await calendar.calendarList.list()).data.items
+        ?.filter((item) => item.summary && item.id)
+        .map((item) => [item.summary!, item.id!]),
+    );
+    // Add default mapping
+    calendarNameToId.set('primary', 'primary');
+    const calendarId = calendarNameToId.get(calendarName);
+    if (!calendarId) {
+      throw new Error(`Calendar name "${calendarName}" not found!`);
+    }
+
     await calendar.events.insert({
-      calendarId: 'primary',
+      calendarId,
       requestBody: {
         summary: course.courseTitleLong,
         description: `Course Id: ${course.crseId}\nSubject: ${course.course}-${course.classSection}\nCredits: ${course.untTaken}\nInstructors:\n${instructorText}`,
