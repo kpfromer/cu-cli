@@ -1,10 +1,13 @@
 #!/bin/env node
+
 import * as inquirer from 'inquirer';
 import * as yargs from 'yargs';
+
+import { authorize, login } from './calendar';
+import { getCourses, getGpa, syncClassesCalendar } from './cli';
+import { setupConfig, toPlace } from './helper';
+
 import chalk from 'chalk';
-import { login, authorize } from './calendar';
-import { getGpa, getCourses, syncClassesCalendar } from './cli';
-import { toPlace, setupConfig } from './helper';
 import { google } from 'googleapis';
 
 (async function () {
@@ -18,13 +21,13 @@ import { google } from 'googleapis';
       async () => {
         const { username, password } = await inquirer.prompt([
           { type: 'input', name: 'username', message: 'Username?' },
-          { type: 'password', name: 'password', message: 'Password?' }
+          { type: 'password', name: 'password', message: 'Password?' },
         ]);
         config.set({
           username,
-          password
+          password,
         });
-      }
+      },
     )
     .command(
       'login-google',
@@ -33,9 +36,9 @@ import { google } from 'googleapis';
       async () => {
         const googleCredentials = await login();
         config.set({
-          google: googleCredentials
+          google: googleCredentials,
         });
-      }
+      },
     )
     .command(
       'clean',
@@ -44,7 +47,7 @@ import { google } from 'googleapis';
       () => {
         config.clear();
         console.log('Logged out');
-      }
+      },
     )
     .command(
       'gpa',
@@ -53,7 +56,7 @@ import { google } from 'googleapis';
       async () => {
         const gpa = await getGpa(config);
         console.log(`${gpa} (${toPlace((gpa / 4) * 100)}%)`);
-      }
+      },
     )
     // .command(
     //   'calendars',
@@ -81,41 +84,51 @@ import { google } from 'googleapis';
           demandCommand: true,
           default: 'current',
           describe: 'the term to grab courses from (current, next, previous)',
-          type: 'string'
+          type: 'string',
         });
       },
       async (argv) => {
         const courses = await getCourses(config, argv.term);
-        for (let course of courses) {
+        for (const course of courses) {
+          if (course.classMtgPatterns.length === 0) continue;
+          const { meetingTimeStart, meetingTimeEnd, meetingDays, instructors } =
+            course.classMtgPatterns[0];
           console.log(
-            `${chalk.green(course.courseTitle)} ${chalk.blue(
-              `(${course.courseSubject} ${course.courseNumber}-${
-                course.courseSection
-              }) ${chalk.red(`${course.credits} credits `)} ${course.days} ${
-                course.courseStartTime
-              }-${course.courseStopTime}`
-            )}`
+            `${chalk.green(course.courseTitleLong)} ${chalk.blue(
+              `(${course.subject} ${course.catalogNbr}-${course.classSection}) ${chalk.red(
+                `${course.untTaken} credits `,
+              )} ${meetingDays.join(', ')} ${meetingTimeStart}-${meetingTimeEnd}`,
+            )}`,
           );
-          for (let instructor of course.instructors) {
-            console.log(`\t${instructor.name} - ${instructor.email}`);
+          if (instructors) {
+            for (const { instructorName, instrEmailAddr } of instructors) {
+              console.log(`\t${instructorName} - ${instrEmailAddr}`);
+            }
           }
         }
-      }
+      },
     )
     .command<{
       term: 'current' | 'next' | 'next-next' | 'previous';
+      name: string;
     }>(
       'sync',
       'syncs classes from term to google calendar',
       (yargs) => {
-        yargs.option('t', {
-          alias: 'term',
-          demandCommand: true,
-          default: 'current',
-          describe:
-            'the term to grab courses from (current, next, next-next, previous)',
-          type: 'string'
-        });
+        yargs
+          .option('t', {
+            alias: 'term',
+            demandCommand: true,
+            default: 'current',
+            describe: 'the term to grab courses from (current, next, next-next, previous)',
+            type: 'string',
+          })
+          .option('n', {
+            alias: 'name',
+            default: 'primary',
+            describe: 'the calendar name to put items into.',
+            type: 'string',
+          });
         // yargs.option('c', {
         //   alias: 'calendarName',
         //   demandCommand: true,
@@ -125,9 +138,10 @@ import { google } from 'googleapis';
         // })
       },
       async (argv) => {
-        await syncClassesCalendar(config, argv.term);
-      }
+        await syncClassesCalendar(config, argv.term, argv.name);
+      },
     )
+    .scriptName('cu-cli')
     .alias('h', 'help')
     .help().argv;
 })();

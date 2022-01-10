@@ -1,4 +1,4 @@
-import { google, calendar_v3 } from 'googleapis';
+import { google } from 'googleapis';
 import { OAuth2Client, Credentials } from 'google-auth-library';
 import * as inquirer from 'inquirer';
 
@@ -6,10 +6,13 @@ import * as inquirer from 'inquirer';
 const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 
 const googleAuth = {
-  client_id:
-    '867864663032-q5bujv25mljvupbet2rr4jrp7aharaps.apps.googleusercontent.com',
-  client_secret: '9IXaOsKa3lQQ7YHMNdQ-x3Yl',
-  redirect_uris: ['urn:ietf:wg:oauth:2.0:oob', 'http://localhost']
+  client_id: '867864663032-2rra99aule2efabu5regpiu2edu1rhfu.apps.googleusercontent.com',
+  project_id: 'quickstart-1566938148739',
+  auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+  token_uri: 'https://oauth2.googleapis.com/token',
+  auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
+  client_secret: '9Ruz9M78kAyPATZDx0QecUt9',
+  redirect_uris: ['urn:ietf:wg:oauth:2.0:oob', 'http://localhost'],
 };
 
 /**
@@ -17,16 +20,10 @@ const googleAuth = {
  * given callback function.
  * @param  credentials The authorization client credentials.
  */
-export async function authorize(
-  credentials: Credentials
-): Promise<OAuth2Client> {
+export async function authorize(credentials: Credentials): Promise<OAuth2Client> {
   const { client_secret, client_id, redirect_uris } = googleAuth;
 
-  const oAuth2Client = new google.auth.OAuth2(
-    client_id,
-    client_secret,
-    redirect_uris[0]
-  );
+  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
 
   oAuth2Client.setCredentials(credentials);
   return oAuth2Client;
@@ -37,27 +34,21 @@ export async function authorize(
  */
 export async function login(): Promise<Credentials> {
   const { client_secret, client_id, redirect_uris } = googleAuth;
-  const oAuth2Client = new google.auth.OAuth2(
-    client_id,
-    client_secret,
-    redirect_uris[0]
-  );
+  const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
   return await getAccessToken(oAuth2Client);
 }
 
 /**
  * Get and store new token after prompting for user authorization, and then execute the given callback with the authorized OAuth2 client.
  */
-async function getAccessToken(
-  oAuth2Client: OAuth2Client
-): Promise<Credentials> {
+async function getAccessToken(oAuth2Client: OAuth2Client): Promise<Credentials> {
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
-    scope: SCOPES
+    scope: SCOPES,
   });
   console.log('Authorize this app by visiting this url:', authUrl);
   const { code } = await inquirer.prompt([
-    { type: 'input', name: 'code', message: 'Enter the code from that page:' }
+    { type: 'input', name: 'code', message: 'Enter the code from that page:' },
   ]);
   const token = await oAuth2Client.getToken(code);
   return token.tokens;
