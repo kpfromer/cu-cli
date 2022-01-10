@@ -11,7 +11,7 @@ specifiers:
   '@types/conf': 3.0.0
   '@types/inquirer': 6.5.0
   '@types/luxon': 1.27.1
-  '@types/uuid': 7.0.5
+  '@types/uuid': 8.3.4
   '@types/yargs': 15.0.14
   '@typescript-eslint/eslint-plugin': 4.33.0
   '@typescript-eslint/parser': 4.33.0
@@ -64,7 +64,7 @@ devDependencies:
   '@types/conf': 3.0.0
   '@types/inquirer': 6.5.0
   '@types/luxon': 1.27.1
-  '@types/uuid': 7.0.5
+  '@types/uuid': 8.3.4
   '@types/yargs': 15.0.14
   '@typescript-eslint/eslint-plugin': 4.33.0_d00b196ac5df1286ea7e45797bebddbc
   '@typescript-eslint/parser': 4.33.0_eslint@7.32.0+typescript@4.5.2
@@ -625,8 +625,8 @@ packages:
       '@types/node': 15.3.0
     dev: true
 
-  /@types/uuid/7.0.5:
-    resolution: {integrity: sha512-hKB88y3YHL8oPOs/CNlaXtjWn93+Bs48sDQR37ZUqG2tLeCS7EA1cmnkKsuQsub9OKEB/y/Rw9zqJqqNSbqVlQ==}
+  /@types/uuid/8.3.4:
+    resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
     dev: true
 
   /@types/yargs-parser/20.2.0:
