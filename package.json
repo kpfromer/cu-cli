@@ -24,7 +24,7 @@
     "googleapis": "^84.0.0",
     "inquirer": "^7.1.0",
     "keytar": "^5.6.0",
-    "luxon": "^1.25.0",
+    "luxon": "^2.0.0",
     "uuid": "^8.0.0",
     "yargs": "^15.3.1"
   },
@@ -38,7 +38,7 @@
     "@semantic-release/release-notes-generator": "9.0.3",
     "@types/conf": "3.0.0",
     "@types/inquirer": "6.5.0",
-    "@types/luxon": "1.27.1",
+    "@types/luxon": "2.3.2",
     "@types/uuid": "7.0.5",
     "@types/yargs": "15.0.14",
     "@typescript-eslint/eslint-plugin": "4.33.0",
