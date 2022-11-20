@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "chalk": "^4.0.0",
-    "conf": "^6.2.4",
+    "conf": "^10.0.0",
     "cu-api": "^4.0.0",
     "google-auth-library": "^7.6.2",
     "googleapis": "^84.0.0",
