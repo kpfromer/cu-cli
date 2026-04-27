@@ -25,7 +25,7 @@
     "inquirer": "^7.1.0",
     "keytar": "^5.6.0",
     "luxon": "^1.25.0",
-    "uuid": "^8.0.0",
+    "uuid": "^14.0.0",
     "yargs": "^15.3.1"
   },
   "devDependencies": {
